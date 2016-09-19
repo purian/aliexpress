@@ -28,8 +28,8 @@ class Wordpress < ActiveRecord::Base
   end
 
   def update_order order_nos, order
-    self.complete_order order
-    self.update_note order, order_nos
+    self.complete_order(order)
+    self.update_note(order, order_nos)
   rescue
     @error = "Erro ao atualizar pedido #{order["id"]} no wordpress, verificar ultimo pedido na aliexpress."
   end

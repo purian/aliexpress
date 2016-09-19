@@ -13,6 +13,14 @@ class Crawler < ActiveRecord::Base
     Watir.default_timeout = 90
     @b.window.maximize
     raise "Falha no login, verifique as informações de configuração aliexpress ou tente novamente mais tarde" unless self.login
+    @b.div(class: "ng-switcher").when_present.click
+    sleep 1
+    @b.div(class: "country-selector").when_present.click
+    sleep 1
+    @b.span(class: "css_br").when_present.click
+    sleep 1
+    @b.button(class: "go-contiune-btn").when_present.click
+    sleep 1
     orders.each do |order|
       @finished = false
       @error = nil
@@ -149,11 +157,13 @@ class Crawler < ActiveRecord::Base
       shipping = item[:shipping]
       unless shipping.nil? || shipping == 0
         @b.goto 'https://shoppingcart.aliexpress.com/'
+        @b.div(class: "link-fake-selector").when_present.click
+
         @b.tbodys.each do |product_info|
           if product_info.a(class: "lnk-product-name").href.include?(product_link)
             product_info.div(class: "product-shipping-select").when_present.click
             sleep 2
-            shipping_name = product_info.form.divs(class: "shipping-line")[shipping-1].text.split("\n")[0]
+            shipping_name = product_info.form.divs(class: "shipping-line")[shipping-1]. text.split("\n")[0]
             @log.add_message("Produto com frete, selecionando frete: #{shipping_name}")
             product_info.form.divs(class: "shipping-line")[shipping-1].when_present.click
             sleep 2
