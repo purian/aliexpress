@@ -57,6 +57,7 @@ class Crawler < ActiveRecord::Base
               end
               raise "Produto #{item["name"]} não encontrado, necessário importar do wordpress" if product_type.nil?
               shipping = product_type.shipping
+              raise "Frete não implementado, pulando pedido!" if shipping == 0 || shipping.nil?
               order_items << {product_type: product_type, shipping: shipping}
               raise "Link aliexpress não cadastrado para #{item["name"]}" if product_type.aliexpress_link.nil?
               @b.goto product_type.parsed_link #Abre link do produto
@@ -157,6 +158,7 @@ class Crawler < ActiveRecord::Base
       product_link = item[:product_type].link_id
       shipping = item[:shipping]
       unless shipping.nil? || shipping == 0
+        raise "Frete não implementado, pulando pedido"
         @b.goto 'https://shoppingcart.aliexpress.com/'
         @b.div(class: "link-fake-selector").when_present.click
 
