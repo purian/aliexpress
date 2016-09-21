@@ -88,7 +88,7 @@ class Crawler < ActiveRecord::Base
           raise if !@error.nil?
           @log.add_message("Pedido completado na Aliexpress")
           raise "Erro com numero do pedido vazio" if order_nos.nil?
-          self.wordpress.update_order(order, order_nos)
+          self.wordpress.update_order(order, order_nos.text)
           @error = self.wordpress.error
           @log.add_message(@error)
           @log.add_processed("Pedido #{order["id"]} processado com sucesso! Links aliexpress: #{order_nos.text}")
