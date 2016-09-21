@@ -81,7 +81,7 @@ class Crawler < ActiveRecord::Base
           end
         #Finaliza pedido
         if @error.nil?
-          self.set_shipping order_items
+          # self.set_shipping order_items
           @b.goto 'https://m.aliexpress.com/shopcart/detail.htm'
           raise "Erro com itens do carrinho, cancelando pedido" if @b.lis(id: "shopcart-").count != order["line_items"].count
           order_nos = self.complete_order(customer)
