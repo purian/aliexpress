@@ -78,10 +78,9 @@ class Crawler < ActiveRecord::Base
           self.set_shipping(order_items)
           @b.goto 'https://m.aliexpress.com/shopcart/detail.htm'
           raise "Erro com itens do carrinho, cancelando pedido" if @b.lis(id: "shopcart-").count != order["line_items"].count
-          sleep 2
           @b.div(class: "buyall").when_present.click
-          sleep 2
-          raise "Erro de cliente" unless @b.lis(class: "item")[3].text == customer["postcode"]
+          sleep 5
+          raise "Erro de cliente: #{@b.lis(class: "item")[3].text} diferente de #{customer["postcode"]}" unless @b.lis(class: "item")[3].text == customer["postcode"]
           @b.button(id: "create-order").when_present.click #Botão Finalizar pedido
           @log.add_message('Finalizando Pedido')
           @finished = true
