@@ -81,7 +81,6 @@ class Crawler < ActiveRecord::Base
           sleep 2
           @b.div(class: "buyall").when_present.click
           sleep 2
-          binding.pry
           raise "Erro de cliente" unless @b.lis(class: "item")[3].text == customer["postcode"]
           @b.button(id: "create-order").when_present.click #Botão Finalizar pedido
           @log.add_message('Finalizando Pedido')
