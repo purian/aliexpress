@@ -54,7 +54,7 @@ class Crawler < ActiveRecord::Base
               raise "Link aliexpress não cadastrado para #{item["name"]}" if product_type.aliexpress_link.nil?
               @b.goto product_type.parsed_link #Abre link do produto
               frete = @b.div(class: "p-logistics-detail").present? ? @b.div(class: "p-logistics-detail").text : ""
-              raise "Frete não é grátis para produto #{item["name"]}, cancelando pedido. Frete: #{frete}" unless frete.include?("gratuita") || frete.include?("free") || !product_type.shipping.nil?
+              # raise "Frete não é grátis para produto #{item["name"]}, cancelando pedido. Frete: #{frete}" unless frete.include?("gratuita") || frete.include?("free") || !product_type.shipping.nil?
               user_options = [product_type.option_1, product_type.option_2 ,product_type.option_3]
               self.set_options user_options
               #Ações dos produtos
@@ -81,9 +81,12 @@ class Crawler < ActiveRecord::Base
           sleep 2
           @b.div(class: "buyall").when_present.click
           sleep 2
+          binding.pry
+          raise "Erro de cliente" unless @b.lis(class: "item")[3].text == customer["postcode"]
           @b.button(id: "create-order").when_present.click #Botão Finalizar pedido
           @log.add_message('Finalizando Pedido')
           @finished = true
+          sleep 5
           order_nos = @b.div(class:"desc_txt")
           # order_nos = self.complete_order(customer)
           raise if !@error.nil?
@@ -241,6 +244,7 @@ class Crawler < ActiveRecord::Base
     @b.text_field(name: "zip").when_present.set customer["postcode"]
     @b.text_field(name: "mobileNo").when_present.set '11941873849'
     @b.a(class: "sa-confirm").when_present.click
+    sleep 3
   end
 
   # def complete_order_mobile customer
