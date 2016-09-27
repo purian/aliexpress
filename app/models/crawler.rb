@@ -242,7 +242,7 @@ class Crawler < ActiveRecord::Base
     @b.text_field(name: "zip").when_present.set customer["postcode"]
     @b.text_field(name: "mobileNo").when_present.set '11941873849'
     @b.a(class: "sa-confirm").when_present.click
-    sleep 3
+    sleep 5
   end
 
   # def complete_order_mobile customer
