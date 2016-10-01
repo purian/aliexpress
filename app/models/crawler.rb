@@ -10,7 +10,7 @@ class Crawler < ActiveRecord::Base
 
     @log = CrawlerLog.create!(crawler: self, orders_count: orders.count)
     @b = Watir::Browser.new :phantomjs
-    Watir.default_timeout = 90
+    Watir.default_timeout = 120
     @b.window.maximize
     raise "Falha no login, verifique as informações de configuração aliexpress ou tente novamente mais tarde" unless self.login
     orders.each do |order|
@@ -78,14 +78,12 @@ class Crawler < ActiveRecord::Base
           self.set_shipping(order_items)
           @b.goto 'https://m.aliexpress.com/shopcart/detail.htm'
           raise "Erro com itens do carrinho, cancelando pedido" if @b.lis(id: "shopcart-").count != order["line_items"].count
-          @b.div(class: "buyall").when_present.click
-          sleep 5
+          @b.div(class: "buyall").when_present.click #Botão Finalizar pedido
           raise "Erro de cliente: #{@b.lis(class: "item")[3].text} diferente de #{customer["postcode"]}" unless @b.lis(class: "item")[3].text == customer["postcode"]
           @b.button(id: "create-order").when_present.click #Botão Finalizar pedido
           @log.add_message('Finalizando Pedido')
           @finished = true
-          sleep 5
-          order_nos = @b.div(class:"desc_txt")
+          order_nos = @b.div(class:"desc_txt").when_present
           # order_nos = self.complete_order(customer)
           raise if !@error.nil?
           @log.add_message("Pedido completado na Aliexpress")
@@ -226,6 +224,7 @@ class Crawler < ActiveRecord::Base
   #Iinformações do cliente
   def fill_shipping_address customer
     @b.button(class: "buy-now").when_present.click
+    sleep 3
     @b.a(class: "sa-edit").present? ? @b.a(class: "sa-edit").click : @b.a(class: "sa-add-a-new-address").click
     @log.add_message('Adicionando informações do cliente')
     @b.text_field(name: "contactPerson").when_present.set to_english(customer["first_name"]+" "+customer["last_name"])
@@ -242,7 +241,7 @@ class Crawler < ActiveRecord::Base
     @b.text_field(name: "zip").when_present.set customer["postcode"]
     @b.text_field(name: "mobileNo").when_present.set '11941873849'
     @b.a(class: "sa-confirm").when_present.click
-    sleep 5
+    sleep 3
   end
 
   # def complete_order_mobile customer
