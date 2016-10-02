@@ -164,7 +164,6 @@ class Crawler < ActiveRecord::Base
             sleep 2
             shipping_name = product_info.divs(class: "shipping-line")[shipping-1].text.split("\n")[0]
             @log.add_message("Produto com frete, selecionando frete: #{shipping_name}")
-            binding.pry
             product_info.radios[shipping-1].when_present.click
             sleep 2
             product_info.button(class: "btn-ok").when_present.click
