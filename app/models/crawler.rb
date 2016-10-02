@@ -166,7 +166,8 @@ class Crawler < ActiveRecord::Base
             @log.add_message("Produto com frete, selecionando frete: #{shipping_name}")
             product_info.radios[shipping-1].when_present.click
             sleep 2
-            product_info.form.button.when_present.click
+            product_info.button(class: "btn-ok").when_present.click
+            # product_info.form.button.when_present.click
           end
         end
       end
