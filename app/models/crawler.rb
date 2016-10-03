@@ -167,7 +167,7 @@ class Crawler < ActiveRecord::Base
             product_info.radios[shipping-1].when_present.click
             sleep 2
             product_info.button(class: "btn-ok").when_present.click
-            # product_info.form.button.when_present.click
+            sleep 2
           end
         end
       end
@@ -241,6 +241,7 @@ class Crawler < ActiveRecord::Base
     @b.text_field(name: "city").when_present.set to_english(customer["city"])
     @b.text_field(name: "zip").when_present.set customer["postcode"]
     @b.text_field(name: "mobileNo").when_present.set '11941873849'
+    @b.text_field(name: "cpf").when_present.set '35825265856'
     @b.a(class: "sa-confirm").when_present.click
     sleep 3
   end
