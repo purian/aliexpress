@@ -1,3 +1,4 @@
+<%= form_tag url_for(:action => :create), :remote => true, :id => "product_type_form" do %>
 <%- model_class = ProductType -%>
 <div class="page-header">
   <h1><%=t '.title', :default => model_class.model_name.human.titleize.pluralize %></h1>
@@ -10,9 +11,8 @@
     </p>
   </h4>
 </div>
-<%= link_to t('.import_products', :default => t("helpers.links.import_products")),
-import_all_products_path, method: :post,
-:class => 'btn btn-primary' %>
+<%= link_to t('.import_products', :default => t("helpers.links.import_products")), import_all_products_path, method: :post, :class => 'btn btn-primary' %>
+<%= submit_tag "Salvar", :class => 'btn btn-success' %>
 <div class="table-responsive">
   <%= will_paginate @product_types %>
   <table class="table table-condensed">
@@ -26,7 +26,6 @@ import_all_products_path, method: :post,
         <th><%= model_class.human_attribute_name(:option_1) %></th>
         <th><%= model_class.human_attribute_name(:option_2) %></th>
         <th><%= model_class.human_attribute_name(:option_3) %></th>
-        <th><%= model_class.human_attribute_name(:shipping) %></th>
         <th><%= model_class.human_attribute_name(:updated_at) %></th>
         <th><%=t '.actions', :default => t("helpers.actions") %></th>
       </tr>
@@ -34,19 +33,17 @@ import_all_products_path, method: :post,
     <tbody>
       <% @product_types.each do |product_type| %>
         <tr>
+          <%= hidden_field_tag "product_type[][id]", product_type.id %>
           <td><%= link_to product_type.product.wordpress_id, product_type_path(product_type.product) %></td>
           <td><%= product_type.product.name %></td>
           <td><%= product_type.name %></td>
           <td><a href="<%=product_type.product.link%>"><%=product_type.product.link%></a></td>
-          <td><a href="<%=product_type.aliexpress_link%>"><%=product_type.aliexpress_link%></a></td>
-          <td><%= product_type.option_1 %></td>
-          <td><%= product_type.option_2 %></td>
-          <td><%= product_type.option_3 %></td>
-          <td><%= product_type.shipping %></td>
+          <td><%= text_field_tag "product_type[][aliexpress_link]", product_type.aliexpress_link%></a></td>
+          <td><%= text_field_tag "product_type[][option_1]", product_type.option_1 %></td>
+          <td><%= text_field_tag "product_type[][option_2]", product_type.option_2 %></td>
+          <td><%= text_field_tag "product_type[][option_3]", product_type.option_3 %></td>
           <td><%=l product_type.updated_at %></td>
           <td>
-            <%= link_to t('.edit', :default => t("helpers.links.edit")),
-                        edit_product_type_path(product_type), :class => 'btn btn-default btn-xs' %>
             <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
                         product_type_path(product_type),
                         :method => :delete,
@@ -59,3 +56,4 @@ import_all_products_path, method: :post,
   </table>
   <%= will_paginate @product_types %>
 </div>
+<% end %>
