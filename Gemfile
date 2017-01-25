@@ -19,7 +19,6 @@ gem 'will_paginate', '~> 3.0.5'
 gem 'rack', '1.6.4'
 gem 'rufus-scheduler', '~> 3.2', '>= 3.2.2'
 gem 'rails_12factor'
-gem 'roo'
 
 group :development, :test do
   gem 'byebug'

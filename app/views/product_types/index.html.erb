@@ -22,11 +22,14 @@
         <th><%= model_class.human_attribute_name(:name) %></th>
         <th><%= model_class.human_attribute_name(:type) %></th>
         <th><%= model_class.human_attribute_name(:link) %></th>
-        <th><%= model_class.human_attribute_name(:aliexpress_link) %></th>
-        <th><%= model_class.human_attribute_name(:aliexpress_link_extra) %></th>
-        <th><%= model_class.human_attribute_name(:option_1) %></th>
-        <th><%= model_class.human_attribute_name(:option_2) %></th>
-        <th><%= model_class.human_attribute_name(:option_3) %></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
         <th><%= model_class.human_attribute_name(:updated_at) %></th>
         <th><%=t '.actions', :default => t("helpers.actions") %></th>
       </tr>
@@ -39,11 +42,14 @@
           <td><%= product_type.product.name %></td>
           <td><%= product_type.name %></td>
           <td><a href="<%=product_type.product.link%>"><%=product_type.product.link%></a></td>
-          <td><%= text_field_tag "product_type[][aliexpress_link]", product_type.aliexpress_link%></a></td>
-          <td><%= text_field_tag "product_type[][aliexpress_link_extra]", product_type.aliexpress_link_extra%></a></td>
-          <td><%= text_field_tag "product_type[][option_1]", product_type.option_1 %></td>
-          <td><%= text_field_tag "product_type[][option_2]", product_type.option_2 %></td>
-          <td><%= text_field_tag "product_type[][option_3]", product_type.option_3 %></td>
+          <td><strong><%= model_class.human_attribute_name(:aliexpress_link) %></strong><%= text_field_tag "product_type[][aliexpress_link]", product_type.aliexpress_link%></a></td>
+          <td><strong><%= model_class.human_attribute_name(:option_1) %></strong><%= text_field_tag "product_type[][option_1]", product_type.option_1 %></td>
+          <td><strong><%= model_class.human_attribute_name(:option_2) %></strong><%= text_field_tag "product_type[][option_2]", product_type.option_2 %></td>
+          <td><strong><%= model_class.human_attribute_name(:option_3) %></strong><%= text_field_tag "product_type[][option_3]", product_type.option_3 %></td>
+          <td><strong><%= model_class.human_attribute_name(:aliexpress_link_extra) %></strong><%= text_field_tag "product_type[][aliexpress_link_extra]", product_type.aliexpress_link_extra%></td>
+          <td><strong><%= model_class.human_attribute_name(:option_1_extra) %></strong><%= text_field_tag "product_type[][option_1_extra]", product_type.option_1_extra %></td>
+          <td><strong><%= model_class.human_attribute_name(:option_2_extra) %></strong><%= text_field_tag "product_type[][option_2_extra]", product_type.option_2_extra %></td>
+          <td><strong><%= model_class.human_attribute_name(:option_3_extra) %></strong><%= text_field_tag "product_type[][option_3_extra]", product_type.option_3_extra %></td>
           <td><%=l product_type.updated_at %></td>
           <td>
             <%= link_to t('.destroy', :default => t("helpers.links.destroy")),

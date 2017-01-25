@@ -156,9 +156,13 @@ pt-BR:
         name: 'Nome'
         type: 'Tipo'
         aliexpress_link: 'Link Aliexpress'
+        aliexpress_link_extra: 'Link Aliexpress Extra'
         option_1: 'Opção 1'
         option_2: 'Opção 2'
         option_3: 'Opção 3'
+        option_2_extra: 'Opção 2 Extra'
+        option_3_extra: 'Opção 3 Extra'
+        option_1_extra: 'Opção 1 Extra'
         shipping: 'Frete'
         updated_at: 'Atualizado em'
       wordpress:
