@@ -24,6 +24,7 @@ class ProductTypesController < ApplicationController
         product_type.option_2 = data[:option_2]
         product_type.option_3 = data[:option_3]
         product_type.aliexpress_link = data[:aliexpress_link]
+        product_type.aliexpress_link_extra = data[:aliexpress_link_extra]
         product_type.save
       end
     end
@@ -70,7 +71,7 @@ class ProductTypesController < ApplicationController
   end
 
   def product_type_params
-    params.require(:product_type).permit(:id, :name, :aliexpress_link, :option_1,
+    params.require(:product_type).permit(:id, :name, :aliexpress_link, :aliexpress_link_extra, :option_1,
                                          :option_2, :option_3, :shipping)
   end
 end
