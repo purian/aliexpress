@@ -42,7 +42,7 @@ class Wordpress < ActiveRecord::Base
       }
     }
     #POST em order notes
-    woocommerce.post("orders/#{order["id"]}/notes", data).parsed_response
+    # woocommerce.post("orders/#{order["id"]}/notes", data).parsed_response
   end
 
   def complete_order order
@@ -52,15 +52,17 @@ class Wordpress < ActiveRecord::Base
       }
     }
     #PUT para mudar a ordem para concluída
-    woocommerce.put("orders/#{order["id"]}", data).parsed_response
+    # woocommerce.put("orders/#{order["id"]}", data).parsed_response
   end
 
   def get_orders
     #Pegar todos os pedidos com status Processado, 200, ordem ascendente e apenas dados
     #que serão usados: id,shipping_address,line_items, billing_address
-    all_orders = woocommerce.get("orders?filter[limit]=200&filter[order]=asc&status=processing&fields=id,shipping_address,billing_address,line_items").parsed_response
+    # all_orders = woocommerce.get("orders?filter[limit]=200&filter[order]=asc&status=processing&fields=id,shipping_address,billing_address,line_items").parsed_response
+    order = woocommerce.get("orders/26514").parsed_response
     #Converção para array
-    all_orders["orders"]
+    # all_orders["orders"]
+    order["order"]
   rescue
     @error =  "Erro ao importar pedidos do Wordpress, favor verificar configurações."
   end
