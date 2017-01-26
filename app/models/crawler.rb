@@ -9,7 +9,7 @@ class Crawler < ActiveRecord::Base
     # raise "Não há pedidos a serem executados" if orders.nil? || orders.count == 0
 
     # @log = CrawlerLog.create!(crawler: self, orders_count: orders.count)
-    binding.pry
+    @log = CrawlerLog.create!(crawler: self, orders_count: 1)
     @b = Watir::Browser.new :phantomjs
     Watir.default_timeout = 120
     @b.window.maximize
@@ -20,8 +20,8 @@ class Crawler < ActiveRecord::Base
       @error = nil
       begin
         tries ||= 3
-        # @log.add_message("-------------------")
-        # @log.add_message("Processando pedido ##{order['id']}")
+        @log.add_message("-------------------")
+        @log.add_message("Processando pedido ##{order['id']}")
         # notes = self.wordpress.get_notes order
         # unless notes.empty?
         #   notes.each do |note|
@@ -50,11 +50,12 @@ class Crawler < ActiveRecord::Base
                 product_type = ProductType.find_by(product: product, name: name.strip)
               end
               raise "Produto #{item["name"]} não encontrado, necessário importar do wordpress" if product_type.nil?
-              shipping = product_type.shipping
-              order_items << {product_type: product_type, shipping: shipping}
+              # shipping = product_type.shipping
+              # order_items << {product_type: product_type, shipping: shipping}
+              order_items << {product_type: product_type}
               raise "Link aliexpress não cadastrado para #{item["name"]}" if product_type.aliexpress_link.nil?
               @b.goto product_type.parsed_link #Abre link do produto
-              frete = @b.div(class: "p-logistics-detail").present? ? @b.div(class: "p-logistics-detail").text : ""
+              # frete = @b.div(class: "p-logistics-detail").present? ? @b.div(class: "p-logistics-detail").text : ""
               user_options = [product_type.option_1, product_type.option_2 ,product_type.option_3]
               self.set_options user_options
               #Ações dos produtos
@@ -75,7 +76,7 @@ class Crawler < ActiveRecord::Base
         if @error.nil?
           @b.goto 'https://shoppingcart.aliexpress.com/'
           self.fill_shipping_address(customer)
-          self.set_shipping(order_items)
+          # self.set_shipping(order_items)
           @b.goto 'https://m.aliexpress.com/shopcart/detail.htm'
           raise "Erro com itens do carrinho, cancelando pedido" if @b.lis(id: "shopcart-").count != order["line_items"].count
           @b.div(class: "buyall").when_present.click #Botão Finalizar pedido
@@ -115,9 +116,8 @@ class Crawler < ActiveRecord::Base
 
   #Efetua login no site da Aliexpresss usando user e password
   def login
-    binding.pry
     tries ||= 3
-    # @log.add_message("Efetuando login com #{self.aliexpress.email}")
+    @log.add_message("Efetuando login com #{self.aliexpress.email}")
     user = self.aliexpress
     @b.goto "https://login.aliexpress.com/"
     frame = @b.iframe(id: 'alibaba-login-box')
