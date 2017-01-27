@@ -197,17 +197,27 @@ class Crawler < ActiveRecord::Base
     sleep 3
     @b.a(class: "sa-edit").present? ? @b.a(class: "sa-edit").click : @b.a(class: "sa-add-a-new-address").click
     @log.add_message('Adicionando informações do cliente')
-    @b.text_field(name: "contactPerson").when_present.set to_english(customer["first_name"]+" "+customer["last_name"])
+    while @b.text_field(name: "contactPerson").text != to_english(customer["first_name"]+" "+customer["last_name"] do
+      @b.text_field(name: "contactPerson").when_present.set to_english(customer["first_name"]+" "+customer["last_name"])
+    end
     @b.select_list(name: "country").when_present.select "Brazil"
     address = customer["address_1"]
     address = address + ", "+ customer['number'] if customer['number']
     address = address + " - "+ customer['address_2'] if customer['address_2']
-    @b.text_field(name: "address").when_present.set to_english(address)
-    @b.text_field(name: "address2").when_present.set to_english(customer["neighborhood"])
+    while @b.text_field(name: "address").text != to_english(address) do
+      @b.text_field(name: "address").when_present.set to_english(address)
+    end
+    while @b.text_field(name: "address2").text != to_english(customer["neighborhood"])
+      @b.text_field(name: "address2").when_present.set to_english(customer["neighborhood"])
+    end
     arr = self.state.assoc(customer["state"])
     @b.div(class: "sa-province-wrapper").select_list.when_present.select arr[1]
-    @b.text_field(name: "city").when_present.set to_english(customer["city"])
-    @b.text_field(name: "zip").when_present.set customer["postcode"]
+    while @b.text_field(name: "city").text != to_english(customer["city"] do
+      @b.text_field(name: "city").when_present.set to_english(customer["city"])
+    end
+    while @b.text_field(name: "zip").text != customer["postcode"] do
+      @b.text_field(name: "zip").when_present.set customer["postcode"]
+    end
     @b.text_field(name: "mobileNo").when_present.set ENV['TELEFONE']
     @b.text_field(name: "cpf").when_present.set ENV['CPF']
     @b.a(class: "sa-confirm").when_present.click
