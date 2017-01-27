@@ -38,11 +38,11 @@ class Wordpress < ActiveRecord::Base
     #Atualiza pedidos no wordpress com o numero dos pedidos da aliexpress
     data = {
       order_note: {
-        note: order_nos
+        note: "Pedido(s) na Aliexpress: #{order_nos}"
       }
     }
     #POST em order notes
-    # woocommerce.post("orders/#{order["id"]}/notes", data).parsed_response
+    woocommerce.post("orders/#{order["id"]}/notes", data).parsed_response
   end
 
   def complete_order order
@@ -58,8 +58,8 @@ class Wordpress < ActiveRecord::Base
   def get_orders
     #Pegar todos os pedidos com status Processado, 200, ordem ascendente e apenas dados
     #que serão usados: id,shipping_address,line_items, billing_address
-    # all_orders = woocommerce.get("orders?filter[limit]=200&filter[order]=asc&status=processing&fields=id,shipping_address,billing_address,line_items").parsed_response
-    order = woocommerce.get("orders/26514").parsed_response
+    all_orders = woocommerce.get("orders?filter[limit]=200&filter[order]=asc&status=on-hold&fields=id,shipping_address,billing_address,line_items").parsed_response
+    order = woocommerce.get("orders/5329").parsed_response
     #Converção para array
     # all_orders["orders"]
     order["order"]

@@ -22,15 +22,16 @@ class Crawler < ActiveRecord::Base
         tries ||= 3
         @log.add_message("-------------------")
         @log.add_message("Processando pedido ##{order['id']}")
-        # notes = self.wordpress.get_notes order
-        # unless notes.empty?
-        #   notes.each do |note|
-        #     if note["note"].include? "Concluído"
-        #       self.wordpress.complete_order(order)
-        #       raise "Pedido ja executado!"
-        #     end
-        #   end
-        # end
+        notes = self.wordpress.get_notes order
+        unless notes.empty?
+          notes.each do |note|
+            if note["note"].include? "Pedido(s) na Aliexpress"
+              raise "Pedido ja executado!"
+            elsif !note["note"].include? "Email Enviado!"
+              raise "Email não enviado!"
+            end
+          end
+        end
 
         self.empty_cart #Esvazia Carrinho
         customer = order["shipping_address"] #Loop para todos os produtos
