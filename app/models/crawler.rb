@@ -9,7 +9,7 @@ class Crawler < ActiveRecord::Base
     raise "Não há pedidos a serem executados" if orders.nil? || orders.count == 0
 
     @log = CrawlerLog.create!(crawler: self, orders_count: orders.count)
-    @log = CrawlerLog.create!(crawler: self, orders_count: 1)
+    # @log = CrawlerLog.create!(crawler: self, orders_count: 1)
     @b = Watir::Browser.new :phantomjs
     Watir.default_timeout = 120
     @b.window.maximize
