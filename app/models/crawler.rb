@@ -197,7 +197,7 @@ class Crawler < ActiveRecord::Base
     sleep 3
     @b.a(class: "sa-edit").present? ? @b.a(class: "sa-edit").click : @b.a(class: "sa-add-a-new-address").click
     @log.add_message('Adicionando informações do cliente')
-    while @b.text_field(name: "contactPerson").text != to_english(customer["first_name"]+" "+customer["last_name"] do
+    while @b.text_field(name: "contactPerson").text != to_english(customer["first_name"]+" "+customer["last_name"]) do
       @b.text_field(name: "contactPerson").when_present.set to_english(customer["first_name"]+" "+customer["last_name"])
     end
     @b.select_list(name: "country").when_present.select "Brazil"
@@ -212,7 +212,7 @@ class Crawler < ActiveRecord::Base
     end
     arr = self.state.assoc(customer["state"])
     @b.div(class: "sa-province-wrapper").select_list.when_present.select arr[1]
-    while @b.text_field(name: "city").text != to_english(customer["city"] do
+    while @b.text_field(name: "city").text != to_english(customer["city"]) do
       @b.text_field(name: "city").when_present.set to_english(customer["city"])
     end
     while @b.text_field(name: "zip").text != customer["postcode"] do
