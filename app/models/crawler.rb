@@ -206,6 +206,8 @@ class Crawler < ActiveRecord::Base
     address = address + " - "+ customer['address_2'] if customer['address_2']
     while !@b.text_field(name: "address").text.contain? to_english(address) do
       @b.text_field(name: "address").when_present.set to_english(address)
+      @log.add_message("text: #{b.text_field(name: "address").text}")
+      @log.add_message("customer: #{to_english(address)}")
     end
     while !@b.text_field(name: "address2").text.contain? to_english(customer["neighborhood"])
       @b.text_field(name: "address2").when_present.set to_english(customer["neighborhood"])
