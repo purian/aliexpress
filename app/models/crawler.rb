@@ -6,16 +6,16 @@ class Crawler < ActiveRecord::Base
   has_many :crawler_logs
 
   def run(orders)
-    # raise "Não há pedidos a serem executados" if orders.nil? || orders.count == 0
+    raise "Não há pedidos a serem executados" if orders.nil? || orders.count == 0
 
-    # @log = CrawlerLog.create!(crawler: self, orders_count: orders.count)
+    @log = CrawlerLog.create!(crawler: self, orders_count: orders.count)
     @log = CrawlerLog.create!(crawler: self, orders_count: 1)
     @b = Watir::Browser.new :phantomjs
     Watir.default_timeout = 120
     @b.window.maximize
     raise "Falha no login, verifique as informações de configuração aliexpress ou tente novamente mais tarde" unless self.login
-    order = orders
-    # orders.each do |order|
+    # order = orders
+    orders.each do |order|
       @finished = false
       @error = nil
       begin
@@ -108,7 +108,7 @@ class Crawler < ActiveRecord::Base
         @log.add_message("Erro de timeout, Tentando mais #{tries-1} vezes")
         retry unless (tries -= 1).zero? || @finished
       end
-    # end
+    end
     @b.close
   rescue => e
     @error = "Erro desconhecido, procurar administrador."
