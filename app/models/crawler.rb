@@ -25,11 +25,13 @@ class Crawler < ActiveRecord::Base
         notes = self.wordpress.get_notes order
         unless notes.empty?
           notes.each do |note|
+            email_enviado = false
             if note["note"].include? "Pedido(s) na Aliexpress"
               raise "Pedido ja executado!"
-            elsif !note["note"].include? "Email Enviado!"
-              raise "Email não enviado!"
+            elsif note["note"].include? "Email Enviado!"
+              email_enviado = true
             end
+            raise "Email não enviado!" unless email_enviado
           end
         end
 
