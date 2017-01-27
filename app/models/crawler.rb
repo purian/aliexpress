@@ -218,7 +218,7 @@ class Crawler < ActiveRecord::Base
     while @b.text_field(name: "zip").text != customer["postcode"] do
       @b.text_field(name: "zip").when_present.set customer["postcode"]
     end
-    @b.text_field(name: "mobileNo").when_present.set ENV['TELEFONE']
+    # @b.text_field(name: "mobileNo").when_present.set ENV['TELEFONE']
     @b.text_field(name: "cpf").when_present.set ENV['CPF']
     @b.a(class: "sa-confirm").when_present.click
     sleep 3
