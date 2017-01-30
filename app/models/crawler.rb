@@ -6,7 +6,7 @@ class Crawler < ActiveRecord::Base
   has_many :crawler_logs
 
   def run(orders)
-    orders_count = orders.count || 0
+    orders_count = orders.nil? ? 0 : orders.count
     @log = CrawlerLog.create!(crawler: self, orders_count: orders_count)
     raise "Não há pedidos a serem executados" if orders.nil? || orders.count == 0
 
