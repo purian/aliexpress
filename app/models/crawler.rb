@@ -5,10 +5,10 @@ class Crawler < ActiveRecord::Base
   validates :aliexpress_id, :wordpress_id, presence: true
   has_many :crawler_logs
 
-  def run(orders)
+  def run(orders = [])
+    @log = CrawlerLog.create!(crawler: self, orders_count: orders.count)
     raise "Não há pedidos a serem executados" if orders.nil? || orders.count == 0
 
-    @log = CrawlerLog.create!(crawler: self, orders_count: orders.count)
     # @log = CrawlerLog.create!(crawler: self, orders_count: 1)
     @b = Watir::Browser.new :phantomjs
     Watir.default_timeout = 120
