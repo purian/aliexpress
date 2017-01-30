@@ -5,8 +5,9 @@ class Crawler < ActiveRecord::Base
   validates :aliexpress_id, :wordpress_id, presence: true
   has_many :crawler_logs
 
-  def run(orders = [])
-    @log = CrawlerLog.create!(crawler: self, orders_count: orders.count)
+  def run(orders)
+    orders_count = orders.nil? ? 0 || orders.count
+    @log = CrawlerLog.create!(crawler: self, orders_count: orders_count)
     raise "Não há pedidos a serem executados" if orders.nil? || orders.count == 0
 
     # @log = CrawlerLog.create!(crawler: self, orders_count: 1)
