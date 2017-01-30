@@ -41,6 +41,7 @@ class Crawler < ActiveRecord::Base
           order["line_items"].each do |item|
             begin
               quantity = item["quantity"]
+              raise "Mais de 5 produtos iguais, pulando pedido" if quantity > 5
               product = Product.find_by_name(item["name"])
               raise "Produto #{item["name"]} não encontrado, necessário importar do wordpress" if product.nil?
               if (meta = item["meta"]).empty?
