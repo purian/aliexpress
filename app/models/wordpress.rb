@@ -34,6 +34,16 @@ class Wordpress < ActiveRecord::Base
     @error = "Erro ao atualizar pedido #{order["id"]} no wordpress, verificar ultimo pedido na aliexpress."
   end
 
+  def email_note order, message
+    data = {
+      order_note: {
+        note: message,
+        customer_note: true
+      }
+    }
+  woocommerce.post("orders/#{order["id"]}/notes", data).parsed_response
+  end
+
   def update_note order, order_nos
     #Atualiza pedidos no wordpress com o numero dos pedidos da aliexpress
     data = {
