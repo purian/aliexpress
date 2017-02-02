@@ -33,7 +33,7 @@ class Crawler < ActiveRecord::Base
               email_enviado = true
             end
           end
-          self.send_email order unless email_enviado
+          self.send_email(order) unless email_enviado
         end
 
         self.empty_cart #Esvazia Carrinho
@@ -282,6 +282,7 @@ class Crawler < ActiveRecord::Base
   end
 
   def send_email order
+    @log.add_message("Enviando email")
   	date = order["completed_at"].to_date.strftime("%d/%m")
   	name = order["shipping_address"]["first_name"]
   	order_number = order["order_number"]
