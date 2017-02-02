@@ -28,8 +28,8 @@ class Wordpress < ActiveRecord::Base
   end
 
   def update_order order, order_nos
-    self.complete_order order
     self.update_note order, order_nos
+    self.complete_order order
   rescue
     @error = "Erro ao atualizar pedido #{order["id"]} no wordpress, verificar ultimo pedido na aliexpress."
   end
@@ -58,17 +58,17 @@ class Wordpress < ActiveRecord::Base
   def complete_order order
     data = {
       order: {
-        status: "completed"
+        status: "on-hold"
       }
     }
     #PUT para mudar a ordem para concluída
-    # woocommerce.put("orders/#{order["id"]}", data).parsed_response
+    woocommerce.put("orders/#{order["id"]}", data).parsed_response
   end
 
   def get_orders
     #Pegar todos os pedidos com status Processado, 200, ordem ascendente e apenas dados
     #que serão usados: id,shipping_address,line_items, billing_address
-    all_orders = woocommerce.get("orders?filter[limit]=500&filter[order]=asc&status=processing&fields=id,shipping_address,billing_address,line_items").parsed_response
+    all_orders = woocommerce.get("orders?filter[limit]=500&filter[order]=desc&status=processing&fields=id,shipping_address,billing_address,line_items").parsed_response
     # order = woocommerce.get("orders/5329").parsed_response
     #Converção para array
     all_orders["orders"]
