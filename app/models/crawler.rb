@@ -24,16 +24,16 @@ class Crawler < ActiveRecord::Base
         @log.add_message("-------------------")
         @log.add_message("Processando pedido ##{order['id']}")
         notes = self.wordpress.get_notes order
-        unless notes.empty?
-          email_enviado = false
+        email_enviado = false
+        while !email_enviado
           notes.each do |note|
             if note["note"].include? "Pedido(s) na Aliexpress"
               raise "Pedido ja executado!"
-            elsif note["note"].include? "Email Enviado!"
+            elsif note["note"].include? "FOI APROVADO NA DATA"
               email_enviado = true
             end
           end
-          raise "Email não enviado!" unless email_enviado
+          self.send_email order unless email_enviado
         end
 
         self.empty_cart #Esvazia Carrinho
