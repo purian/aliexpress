@@ -282,10 +282,10 @@ class Crawler < ActiveRecord::Base
   end
 
   def send_email order
-  	date = order[“completed_at”].to_date.strftime(“%d/%m”)
-  	name = order["shipping_address"][“first_name”]
-  	order_number = order[“order_number”]
-  	message = "O PEDIDO #{order_number} FOI APROVADO NA DATA #{date} \n     #{name},\n Aguarde que em breve seu pedido chegará em sua residência. Dúvidas sobre prazo de envio ou sobre o pedido acesse o campo PERGUNTAS FREQUENTES em nosso site : http://mistermattpulseiras.com.br/perguntas-frequentes/"
+  	date = order["completed_at"].to_date.strftime("%d/%m")
+  	name = order["shipping_address"]["first_name"]
+  	order_number = order["order_number"]
+  	message = "O PEDIDO #{order_number} FOI APROVADO NA DATA #{date} \n #{name},\n Aguarde que em breve seu pedido chegará em sua residência. Dúvidas sobre prazo de envio ou sobre o pedido acesse o campo PERGUNTAS FREQUENTES em nosso site : http://mistermattpulseiras.com.br/perguntas-frequentes/"
     self.wordpress.email_note order, message
   end
 
