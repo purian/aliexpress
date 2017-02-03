@@ -20,10 +20,10 @@ class Crawler < ActiveRecord::Base
       @finished = false
       @error = nil
       begin
-        raise "Pedido não pago!" if order["completed_at"].nil?
         tries ||= 3
         @log.add_message("-------------------")
         @log.add_message("Processando pedido ##{order['id']}")
+        raise "Pedido não pago!" if order["completed_at"].nil?
         notes = self.wordpress.get_notes order
         email_enviado = false
         while !email_enviado
