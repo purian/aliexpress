@@ -24,9 +24,9 @@ class Crawler < ActiveRecord::Base
         @log.add_message("-------------------")
         @log.add_message("Processando pedido ##{order['id']}")
         raise "Pedido não pago!" if order["completed_at"].nil?
-        notes = self.wordpress.get_notes order
         email_enviado = false
         while !email_enviado
+          notes = self.wordpress.get_notes order
           notes.each do |note|
             if note["note"].include? "Pedido(s) na Aliexpress"
               raise "Pedido ja executado!"
