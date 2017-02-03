@@ -282,6 +282,7 @@ class Crawler < ActiveRecord::Base
     exit
   end
 
+  #Envia email avisando que o pedido esta sendo processado
   def send_email order
   	date = order["completed_at"].to_date.strftime("%d/%m")
   	name = order["shipping_address"]["first_name"]

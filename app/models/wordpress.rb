@@ -82,4 +82,3 @@ class Wordpress < ActiveRecord::Base
     all_notes["order_notes"]
   end
 end
-]
