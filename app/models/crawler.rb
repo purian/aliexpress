@@ -20,6 +20,7 @@ class Crawler < ActiveRecord::Base
       @finished = false
       @error = nil
       begin
+        raise "Pedido não pago!" if order["completed_at"].nil?
         tries ||= 3
         @log.add_message("-------------------")
         @log.add_message("Processando pedido ##{order['id']}")
@@ -282,11 +283,11 @@ class Crawler < ActiveRecord::Base
   end
 
   def send_email order
-    @log.add_message("Enviando email")
   	date = order["completed_at"].to_date.strftime("%d/%m")
   	name = order["shipping_address"]["first_name"]
-  	order_number = order["order_number"]
+  	order_number = order["id"]
   	message = "O PEDIDO #{order_number} FOI APROVADO NA DATA #{date} \n #{name},\n Aguarde que em breve seu pedido chegará em sua residência. Dúvidas sobre prazo de envio ou sobre o pedido acesse o campo PERGUNTAS FREQUENTES em nosso site : http://mistermattpulseiras.com.br/perguntas-frequentes/"
+    @log.add_message("Enviando email")
     self.wordpress.email_note order, message
   end
 
