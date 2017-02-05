@@ -5,6 +5,14 @@ class ProductType < ActiveRecord::Base
     "http://pt.aliexpress.com/item/#{link_item}/#{link_id}"
   end
 
+  def self.search(name)
+    if name
+      joins(:product).where("products.name LIKE ?", "%#{name}%")
+    else
+      ProductType.all
+    end
+  end
+
   def link_id
     process_link[:id]
   end
