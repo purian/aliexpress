@@ -1,3 +1,4 @@
+# encoding: utf-8
 require "watir-webdriver"
 class Crawler < ActiveRecord::Base
   belongs_to :aliexpress

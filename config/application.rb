@@ -24,5 +24,6 @@ module AliexpressApp
     config.i18n.default_locale = :"pt-BR"
     I18n.enforce_available_locales = false
     config.active_record.raise_in_transactional_callbacks = true
+    config.encoding = "utf-8"
   end
 end
