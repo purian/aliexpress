@@ -2,7 +2,7 @@ class ProductType < ActiveRecord::Base
   belongs_to :product
 
   def parsed_link
-    "http://pt.aliexpress.com/item/#{link_item}/#{link_id}"
+    "https://pt.aliexpress.com/item/#{link_item}/#{link_id}"
   end
 
   def self.search(name)

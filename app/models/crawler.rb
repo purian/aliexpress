@@ -60,7 +60,10 @@ class Crawler < ActiveRecord::Base
               # order_items << {product_type: product_type, shipping: shipping}
               order_items << {product_type: product_type}
               raise "Link aliexpress não cadastrado para #{item["name"]}" if product_type.aliexpress_link.nil?
-              @b.goto product_type.parsed_link #Abre link do produto
+              while @b.url != product_type.parsed_link
+                p "validando url produto"
+                @b.goto product_type.parsed_link #Abre link do produto
+              end
               # frete = @b.div(class: "p-logistics-detail").present? ? @b.div(class: "p-logistics-detail").text : ""
               user_options = [product_type.option_1, product_type.option_2 ,product_type.option_3]
               self.set_options user_options
@@ -200,27 +203,38 @@ class Crawler < ActiveRecord::Base
     sleep 3
     @b.a(class: "sa-edit").present? ? @b.a(class: "sa-edit").click : @b.a(class: "sa-add-a-new-address").click
     @log.add_message('Adicionando informações do cliente')
-    @b.text_field(name: "contactPerson").when_present.set to_english(customer["first_name"]+" "+customer["last_name"])
-    sleep 1
+    name = to_english(customer["first_name"]+" "+customer["last_name"])
+    while @b.text_field(name: "contactPerson").value != name
+      p "validando nome"
+      @b.text_field(name: "contactPerson").when_present.set name
+    end
     @b.select_list(name: "country").when_present.select "Brazil"
-    sleep 1
     address = customer["address_1"]
     address = address + ", "+ customer['number'] if customer['number']
     address = address + " - "+ customer['address_2'] if customer['address_2']
-    @b.text_field(name: "address").when_present.set to_english(address)
-    sleep 1
-    @b.text_field(name: "address2").when_present.set to_english(customer["neighborhood"])
-    sleep 1
+    while @b.text_field(name: "address").value != to_english(address)
+      p "validando endereço"
+      @b.text_field(name: "address").when_present.set to_english(address)
+    end
+    while @b.text_field(name: "address2").value != to_english(customer["neighborhood"])
+      p "validando bairro"
+      @b.text_field(name: "address2").when_present.set to_english(customer["neighborhood"])
+    end
     arr = self.state.assoc(customer["state"])
-    @b.div(class: "sa-province-wrapper").select_list.when_present.select arr[1]
-    sleep 1
-    @b.text_field(name: "city").when_present.set to_english(customer["city"])
-    sleep 1
-    @b.text_field(name: "zip").when_present.set customer["postcode"]
-    sleep 1
+    while @b.div(class: "sa-province-wrapper").select_list.selected_options.map(&:text)[0] != arr[1]
+      p "validando estado"
+      @b.div(class: "sa-province-wrapper").select_list.when_present.select arr[1]
+    end
+    while @b.text_field(name: "city").value != to_english(customer["city"])
+      p "validando cidade"
+      @b.text_field(name: "city").when_present.set to_english(customer["city"])
+    end
+    while @b.text_field(name: "zip").value != customer["postcode"]
+      p "validando cep"
+      @b.text_field(name: "zip").when_present.set customer["postcode"]
+    end
     # @b.text_field(name: "mobileNo").when_present.set ENV['TELEFONE']
     @b.text_field(name: "cpf").when_present.set ENV['CPF']
-    sleep 1
     @b.a(class: "sa-confirm").when_present.click
     sleep 3
   end
