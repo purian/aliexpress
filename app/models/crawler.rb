@@ -30,6 +30,7 @@ class Crawler < ActiveRecord::Base
           notes = self.wordpress.get_notes order
           notes.each do |note|
             if note["note"].include? "Pedido(s) na Aliexpress"
+              self.wordpress.complete_order(order, order_nos.text)
               raise "Pedido ja executado!"
             elsif note["note"].include? "FOI APROVADO NA DATA"
               email_enviado = true
