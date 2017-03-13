@@ -47,25 +47,21 @@ class Crawler < ActiveRecord::Base
               raise "Mais de 5 produtos iguais, pulando pedido" if quantity > 5
               product = Product.find_by_name(item["name"])
               raise "Produto #{item["name"]} não encontrado, necessário importar do wordpress" if product.nil?
+              name = ""
               if (meta = item["meta"]).empty?
                 product_type = ProductType.find_by(product: product)
               else
-                name = ""
                 item["meta"].each do |option|
                   name.concat("#{option['value']} ")
                 end
                 product_type = ProductType.find_by(product: product, name: name.strip)
               end
-              raise "Produto #{item["name"]} não encontrado, necessário importar do wordpress" if product_type.nil?
-              # shipping = product_type.shipping
-              # order_items << {product_type: product_type, shipping: shipping}
+              raise "Produto #{item["name"]} #{name} não encontrado, necessário importar do wordpress" if product_type.nil?
               order_items << {product_type: product_type}
-              raise "Link aliexpress não cadastrado para #{item["name"]}" if product_type.aliexpress_link.nil?
+              raise "Link aliexpress não cadastrado para #{product.name} #{product_type.name}" if product_type.aliexpress_link.nil? || product_type.aliexpress_link.blank?
               while @b.url != product_type.parsed_link
-                p "validando url produto"
                 @b.goto product_type.parsed_link #Abre link do produto
               end
-              # frete = @b.div(class: "p-logistics-detail").present? ? @b.div(class: "p-logistics-detail").text : ""
               user_options = [product_type.option_1, product_type.option_2 ,product_type.option_3]
               self.set_options user_options
               #Ações dos produtos
@@ -73,11 +69,11 @@ class Crawler < ActiveRecord::Base
               self.add_quantity quantity
               raise "Erro de estoque, produto #{item["name"]} não disponível na aliexpress!" if @b.text_field(name: 'quantity').value.to_i != quantity  #Verifica quantidade
               self.add_to_cart
-              @log.add_message("Adicionando #{quantity} #{item["name"]} ao carrinho")
+              # @log.add_message("Adicionando #{quantity} #{item["name"]} ao carrinho")
             rescue => e
               @log.add_message(e.message)
-              @error = "Erro no produto #{item["name"]}, verificar se o link da aliexpress está correto, este pedido será pulado."
-              @log.add_message(@error)
+              # @error = "Erro no produto #{item["name"]}, verificar se o link da aliexpress está correto, este pedido será pulado."
+              # @log.add_message(@error)
               product_type.add_error if product && product_type
               break
             end
@@ -92,13 +88,11 @@ class Crawler < ActiveRecord::Base
           @b.div(class: "buyall").when_present.click #Botão Finalizar pedido
           raise "Erro de cliente: #{@b.lis(class: "item")[3].text} diferente de #{customer["postcode"]}" unless @b.lis(class: "item")[3].text == customer["postcode"]
           @b.button(id: "create-order").when_present.click #Botão Finalizar pedido
-          @log.add_message('Finalizando Pedido')
           @finished = true
           order_nos = @b.div(class:"desc_txt").when_present
-          # order_nos = self.complete_order(customer)
           raise if !@error.nil?
-          @log.add_message("Pedido completado na Aliexpress")
           raise "Erro com numero do pedido vazio" if order_nos.nil?
+          # @log.add_message("Pedido completado na Aliexpress")
           self.wordpress.update_order(order, order_nos.text)
           @error = self.wordpress.error
           @log.add_message(@error)
@@ -108,12 +102,12 @@ class Crawler < ActiveRecord::Base
           raise
         end
       rescue => e
-        # @error = "Erro ao concluir pedido #{order["id"]}, verificar aliexpress e wordpress."
-        @log.add_message(e.message)
-        @log.add_message(@error)
-      rescue Net::ReadTimeout => e
-        @log.add_message("Erro de timeout, Tentando mais #{tries-1} vezes")
-        retry unless (tries -= 1).zero? || @finished
+        if e == "Net::ReadTimeout"
+          @log.add_message("Erro de timeout, Tentando mais #{tries-1} vezes")
+          retry unless (tries -= 1).zero? || @finished
+        else
+          @log.add_message(e.message)
+        end
       end
     end
     @b.close
@@ -163,28 +157,6 @@ class Crawler < ActiveRecord::Base
   end
 
 
-  #Seleciona o frete
-  def set_shipping order_items
-    order_items.each do |item|
-      product_link = item[:product_type].link_id
-      shipping = item[:shipping]
-      unless shipping.nil? || shipping == 0
-        @b.trs(class: "item-product").each do |product_info|
-          if product_info.div(class: "p-title").a.href.include?(product_link)
-            product_info.div(class: "product-shipping-select").when_present.click
-            sleep 2
-            shipping_name = product_info.divs(class: "shipping-line")[shipping-1].text.split("\n")[0]
-            @log.add_message("Produto com frete, selecionando frete: #{shipping_name}")
-            product_info.radios[shipping-1].when_present.click
-            sleep 2
-            product_info.button(class: "btn-ok").when_present.click
-            sleep 2
-          end
-        end
-      end
-    end
-  end
-
   #Selecionar opções do produto na Aliexpress usando array de opções da planilha
   def set_options user_options
     @b.div(id: "j-product-info-sku").dls.each_with_index do |option, index|
@@ -203,7 +175,7 @@ class Crawler < ActiveRecord::Base
     @b.button(class: "buy-now").when_present.click
     sleep 3
     @b.a(class: "sa-edit").present? ? @b.a(class: "sa-edit").click : @b.a(class: "sa-add-a-new-address").click
-    @log.add_message('Adicionando informações do cliente')
+    # @log.add_message('Adicionando informações do cliente')
     name = to_english(customer["first_name"]+" "+customer["last_name"])
     while @b.text_field(name: "contactPerson").value != name
       p "validando nome"
@@ -282,7 +254,6 @@ class Crawler < ActiveRecord::Base
   #Esvazia carrinho
   def empty_cart
     tries ||= 3
-    p 'Esvaziando carrinho'
     @b.goto 'http://shoppingcart.aliexpress.com/shopcart/shopcartDetail.htm'
     empty = @b.link(class: "remove-all-product")
     if empty.present?

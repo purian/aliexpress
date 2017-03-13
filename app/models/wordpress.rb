@@ -41,7 +41,7 @@ class Wordpress < ActiveRecord::Base
         customer_note: true
       }
     }
-  woocommerce.post("orders/#{order["id"]}/notes", data).parsed_response
+    woocommerce.post("orders/#{order["id"]}/notes", data).parsed_response
   end
 
   def update_note order, order_nos
