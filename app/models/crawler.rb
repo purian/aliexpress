@@ -72,11 +72,13 @@ class Crawler < ActiveRecord::Base
               self.add_to_cart
               # @log.add_message("Adicionando #{quantity} #{item["name"]} ao carrinho")
             rescue => e
-              @log.add_message(e.message)
-              # @error = "Erro no produto #{item["name"]}, verificar se o link da aliexpress está correto, este pedido será pulado."
-              # @log.add_message(@error)
               product_type.add_error if product && product_type
-              raise "Erro no pedido #{order['id']}, pulando."
+              if e.message == "Net::ReadTimeout"
+                raise
+              else
+                @log.add_message(e.message)
+                raise "Erro no pedido #{order['id']}, pulando."
+              end
             end
           end
         #Finaliza pedido
@@ -103,7 +105,7 @@ class Crawler < ActiveRecord::Base
           raise
         end
       rescue => e
-        if e == "Net::ReadTimeout"
+        if e.message == "Net::ReadTimeout"
           @log.add_message("Erro de timeout, Tentando mais #{tries-1} vezes")
           retry unless (tries -= 1).zero? || @finished
         else
@@ -113,9 +115,9 @@ class Crawler < ActiveRecord::Base
     end
     @b.close
   rescue => e
-    @error = "Erro desconhecido, procurar administrador."
+#     @error = "Erro desconhecido, procurar administrador."
     @log.add_message(e.message)
-    @log.add_message(@error)
+#     @log.add_message(@error)
   end
 
 
