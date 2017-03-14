@@ -76,7 +76,7 @@ class Crawler < ActiveRecord::Base
               # @error = "Erro no produto #{item["name"]}, verificar se o link da aliexpress está correto, este pedido será pulado."
               # @log.add_message(@error)
               product_type.add_error if product && product_type
-              break
+              raise "Erro no pedido #{order['id']}, pulando."
             end
           end
         #Finaliza pedido
