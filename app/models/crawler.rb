@@ -21,7 +21,7 @@ class Crawler < ActiveRecord::Base
       @finished = false
       @error = nil
       begin
-        tries ||= 3
+        tries = 3
         @log.add_message("-------------------")
         @log.add_message("Processando pedido ##{order['id']}")
         raise "Pedido não pago!" if order["completed_at"].nil?
@@ -70,13 +70,14 @@ class Crawler < ActiveRecord::Base
               self.add_quantity quantity
               raise "Erro de estoque, produto #{item["name"]} não disponível na aliexpress!" if @b.text_field(name: 'quantity').value.to_i != quantity  #Verifica quantidade
               self.add_to_cart
-              # @log.add_message("Adicionando #{quantity} #{item["name"]} ao carrinho")
             rescue => e
-              @log.add_message(e.message)
-              # @error = "Erro no produto #{item["name"]}, verificar se o link da aliexpress está correto, este pedido será pulado."
-              # @log.add_message(@error)
               product_type.add_error if product && product_type
-              raise "Erro no pedido #{order['id']}, pulando."
+              if e.message == "Net::ReadTimeout"
+                raise e.message
+              else
+                @log.add_message(e.message)
+                raise "Erro no pedido #{order['id']}, pulando."
+              end
             end
           end
         #Finaliza pedido
@@ -103,7 +104,8 @@ class Crawler < ActiveRecord::Base
           raise
         end
       rescue => e
-        if e == "Net::ReadTimeout"
+        tries = 3
+        if e.message == "Net::ReadTimeout"
           @log.add_message("Erro de timeout, Tentando mais #{tries-1} vezes")
           retry unless (tries -= 1).zero? || @finished
         else
