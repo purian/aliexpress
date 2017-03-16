@@ -1,4 +1,5 @@
 <%- model_class = CrawlerLog -%>
+
 <div class="page-header">
   <h1><%=t '.title', :default => model_class.model_name.human.titleize %></h1>
   <h4>
@@ -6,15 +7,79 @@
     <p>Aqui ficam registrados os resultados da execução de um crawler</p>
   </h4>
 </div>
+<div class="">
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#geral">Geral</a></li>
+    <li><a data-toggle="tab" href="#sucesso">Sucesso</a></li>
+    <li><a data-toggle="tab" href="#quantidade">Quantidade</a></li>
+    <li><a data-toggle="tab" href="#estoque">Estoque Aliexpress</a></li>
+    <li><a data-toggle="tab" href="#link">Link Aliexpress</a></li>
+    <li><a data-toggle="tab" href="#importar">Importar Wordpress</a></li>
+  </ul>
+</div>
+<div class="tab-content">
+  <div id="geral" class="tab-pane fade in active">
+    <dl class="dl-horizontal">
+      <dt><strong><%= model_class.human_attribute_name(:crawler) %>:</strong></dt>
+      <dd><%= link_to @crawler_log.crawler.wordpress.name, crawler_path(@crawler_log.crawler) %></dd>
+      <dt><strong><%= model_class.human_attribute_name(:history) %>:</strong></dt>
+      <% @crawler_log.message.split("|").each do |message| %>
+      <dd><%= message.html_safe %></dd>
+      <% end %>
+    </dl>
+  </div>
+  <div id="sucesso"  class="tab-pane fade">
+    <dl class="dl-horizontal">
+      <dt><strong><%= model_class.human_attribute_name(:crawler) %>:</strong></dt>
+      <dd><%= link_to @crawler_log.crawler.wordpress.name, crawler_path(@crawler_log.crawler) %></dd>
+      <dt><strong><%= model_class.human_attribute_name(:history) %>:</strong></dt>
+      <% @crawler_log.category_1.split("|").each do |message| %>
+      <dd><%= message.html_safe %></dd>
+      <% end %>
+    </dl>
+  </div>
+  <div id="quantidade"  class="tab-pane fade">
+    <dl class="dl-horizontal">
+      <dt><strong><%= model_class.human_attribute_name(:crawler) %>:</strong></dt>
+      <dd><%= link_to @crawler_log.crawler.wordpress.name, crawler_path(@crawler_log.crawler) %></dd>
+      <dt><strong><%= model_class.human_attribute_name(:history) %>:</strong></dt>
+      <% @crawler_log.category_2.split("|").each do |message| %>
+      <dd><%= message %></dd>
+      <% end %>
+    </dl>
+  </div>
+  <div id="estoque"  class="tab-pane fade">
+    <dl class="dl-horizontal">
+      <dt><strong><%= model_class.human_attribute_name(:crawler) %>:</strong></dt>
+      <dd><%= link_to @crawler_log.crawler.wordpress.name, crawler_path(@crawler_log.crawler) %></dd>
+      <dt><strong><%= model_class.human_attribute_name(:history) %>:</strong></dt>
+      <% @crawler_log.category_3.split("|").each do |message| %>
+      <dd><%= message %></dd>
+      <% end %>
+    </dl>
+  </div>
+  <div id="link"  class="tab-pane fade">
+    <dl class="dl-horizontal">
+      <dt><strong><%= model_class.human_attribute_name(:crawler) %>:</strong></dt>
+      <dd><%= link_to @crawler_log.crawler.wordpress.name, crawler_path(@crawler_log.crawler) %></dd>
+      <dt><strong><%= model_class.human_attribute_name(:history) %>:</strong></dt>
+      <% @crawler_log.category_4.split("|").each do |message| %>
+      <dd><%= message %></dd>
+      <% end %>
+    </dl>
+  </div>
+  <div id="importar"  class="tab-pane fade">
+    <dl class="dl-horizontal">
+      <dt><strong><%= model_class.human_attribute_name(:crawler) %>:</strong></dt>
+      <dd><%= link_to @crawler_log.crawler.wordpress.name, crawler_path(@crawler_log.crawler) %></dd>
+      <dt><strong><%= model_class.human_attribute_name(:history) %>:</strong></dt>
+      <% @crawler_log.category_5.split("|").each do |message| %>
+      <dd><%= message %></dd>
+      <% end %>
+    </dl>
+  </div>
+</div>
 
-<dl class="dl-horizontal">
-  <dt><strong><%= model_class.human_attribute_name(:crawler) %>:</strong></dt>
-  <dd><%= link_to @crawler_log.crawler.wordpress.name, crawler_path(@crawler_log.crawler) %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:history) %>:</strong></dt>
-  <% @crawler_log.get_message.each do |message| %>
-    <dd><%= message %></dd>
-  <% end %>
-</dl>
 
 <%= link_to t('.back', :default => t("helpers.links.back")),
               crawler_logs_path, :class => 'btn btn-default'  %>
