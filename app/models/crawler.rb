@@ -23,7 +23,7 @@ class Crawler < ActiveRecord::Base
       begin
         tries ||= 3
         @log.add_message("-------------------")
-        @log.add_message("Processando pedido ##{order['id']}")
+        #@log.add_message("Processando pedido ##{order['id']}")
         raise "Pedido não pago!" if order["completed_at"].nil?
         email_enviado = false
         while !email_enviado
@@ -76,7 +76,7 @@ class Crawler < ActiveRecord::Base
               if e.message == "Net::ReadTimeout"
                 raise
               else
-                @log.add_message(e.message)
+                @log.add_message("Pedido ##{order['id']} - #{e.message}")
                 raise "Erro no pedido #{order['id']}, pulando."
               end
             end
@@ -99,17 +99,17 @@ class Crawler < ActiveRecord::Base
           self.wordpress.update_order(order, order_nos.text)
           @error = self.wordpress.error
           @log.add_message(@error)
-          @log.add_processed("Pedido #{order["id"]} processado com sucesso! Links aliexpress: #{order_nos.text}")
+          @log.add_processed("Processado com sucesso! Links aliexpress: #{order_nos.text}")
           ProductType.clear_errors(order_items)
         else
           raise
         end
       rescue => e
         if e.message == "Net::ReadTimeout"
-          @log.add_message("Erro de timeout, Tentando mais #{tries-1} vezes")
+          @log.add_message("Pedido ##{order['id']} - Erro de timeout, Tentando mais #{tries-1} vezes")
           retry unless (tries -= 1).zero? || @finished
         else
-          @log.add_message(e.message)
+          @log.add_message("Pedido ##{order['id']} - #{e.message}")
         end
       end
     end
@@ -134,7 +134,7 @@ class Crawler < ActiveRecord::Base
     frame.wait_while_present
     true
   rescue => e
-    @log.add_message(e.message)
+    #@log.add_message(e.message)
     @log.add_message("Erro de login, Tentando mais #{tries} vezes")
     retry unless (tries -= 1).zero?
     false

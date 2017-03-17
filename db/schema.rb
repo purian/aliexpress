@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170125185743) do
+ActiveRecord::Schema.define(version: 20170315221454) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,11 @@ ActiveRecord::Schema.define(version: 20170125185743) do
     t.integer  "orders_count", default: 0
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
+    t.string   "category_1",   default: ""
+    t.string   "category_2",   default: ""
+    t.string   "category_3",   default: ""
+    t.string   "category_4",   default: ""
+    t.string   "category_5",   default: ""
   end
 
   add_index "crawler_logs", ["crawler_id"], name: "index_crawler_logs_on_crawler_id", using: :btree
