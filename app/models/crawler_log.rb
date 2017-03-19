@@ -9,19 +9,19 @@ class CrawlerLog < ActiveRecord::Base
   def add_message(message)
     self.message.concat("#{message}|")
     case message
-    when contains("processado com sucesso!")
+    when message.include?("processado com sucesso!")
       self.category_1.concat("#{message}|-------------------|")
 
-    when contains("Mais de 5")
+    when message.include?("Mais de 5")
       self.category_2.concat("#{message}|-------------------|")
 
-    when contains("não disponível na aliexpress!")
+    when message.include?("não disponível na aliexpress!")
       self.category_3.concat("#{message}|-------------------|")
 
-    when contains("Link aliexpress não cadastrado")
+    when message.include?("Link aliexpress não cadastrado")
       self.category_4.concat("#{message}|-------------------|")
 
-    when contains("importar do wordpress")
+    when message.include?("importar do wordpress")
       self.category_5.concat("#{message}|-------------------|")
     end
     self.save!
