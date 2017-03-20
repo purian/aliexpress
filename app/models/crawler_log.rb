@@ -10,7 +10,7 @@ class CrawlerLog < ActiveRecord::Base
   def add_message(message)
     self.message.concat("#{message}|")
     case message
-    when /processado com sucesso!/
+    when /Processado com sucesso!/
       self.category_1.concat("#{message}|-------------------|")
 
     when /Mais de 5/
