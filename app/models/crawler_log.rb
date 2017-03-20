@@ -7,6 +7,7 @@ class CrawlerLog < ActiveRecord::Base
   end
 
   def add_message(message)
+    p message
     self.message.concat("#{message}|")
     case message
     when message.include?("processado com sucesso!")
