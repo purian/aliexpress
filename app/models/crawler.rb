@@ -99,7 +99,7 @@ class Crawler < ActiveRecord::Base
           self.wordpress.update_order(order, order_nos.text)
           @error = self.wordpress.error
           @log.add_message(@error)
-          @log.add_processed("Processado com sucesso! Links aliexpress: #{order_nos.text}")
+          @log.add_processed(order['id'], order_nos.text)
           ProductType.clear_errors(order_items)
         else
           raise
