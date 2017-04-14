@@ -4,7 +4,7 @@ class CrawlerLog < ActiveRecord::Base
 
   def add_processed order, order_nos
     self.add_message("Processado com sucesso! Links aliexpress: #{order_nos}")
-    self.category_1.concat("Pedido: <a href='mistermattpulseiras.com.br/wp-admin/post.php?post=#{order}&action=edit'>#{order}</a> | Pedido(s) Aliexpress: ")
+    self.category_1.concat("Pedido: <a href='https://mistermattpulseiras.com.br/wp-admin/post.php?post=#{order}&action=edit'>#{order}</a> | Pedido(s) Aliexpress: ")
     order_nos.split(",").each do |order_no|
       self.category_1.concat("| <a href='https://trade.aliexpress.com/order_detail.htm?orderId=#{order_no}'>#{order_no}</a>")
     end

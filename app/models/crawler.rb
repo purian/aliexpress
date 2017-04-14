@@ -23,7 +23,7 @@ class Crawler < ActiveRecord::Base
       begin
         tries ||= 3
         @log.add_message("-------------------")
-        #@log.add_message("Processando pedido ##{order['id']}")
+        @log.add_message("Processando pedido ##{order['id']}")
         raise "Pedido não pago!" if order["completed_at"].nil?
         email_enviado = false
         while !email_enviado

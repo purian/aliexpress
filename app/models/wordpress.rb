@@ -68,7 +68,7 @@ class Wordpress < ActiveRecord::Base
   def get_orders
     #Pegar todos os pedidos com status Processado, 200, ordem ascendente e apenas dados
     #que serão usados: id,shipping_address,line_items, billing_address
-    all_orders = woocommerce.get("orders?filter[limit]=200&filter[order]=asc&status=processing&fields=id,completed_at,shipping_address,billing_address,line_items").parsed_response
+    all_orders = woocommerce.get("orders?filter[limit]=50&filter[order]=asc&status=processing&fields=id,completed_at,shipping_address,billing_address,line_items").parsed_response
     # order = woocommerce.get("orders/5329").parsed_response
     #Converção para array
     all_orders["orders"]
