@@ -60,7 +60,7 @@ class Crawler < ActiveRecord::Base
               raise "Produto #{item["name"]} #{name} não encontrado, necessário importar do wordpress" if product_type.nil?
               order_items << {product_type: product_type}
               raise "Link aliexpress não cadastrado para #{product.name} #{product_type.name}" if product_type.aliexpress_link.nil? || product_type.aliexpress_link.blank?
-              while @b.url != product_type.parsed_link
+              while !@b.url.include? product_type.link_id
                 @b.goto product_type.parsed_link #Abre link do produto
               end
               user_options = [product_type.option_1, product_type.option_2 ,product_type.option_3]
